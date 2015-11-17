@@ -1,16 +1,16 @@
 # sourcerer
-Make sure python is installed
+Make sure python is installed.<br />
 If pip was not installed with python, install that as well
 
 Install praw using pip install praw
    pip install praw
 
-Install textblob
-   pip install -U textblob
+Install textblob<br />
+   pip install -U textblob<br />
    python -m textblob.download_corpora
 
-Run Sourcerer
+Run Sourcerer<br />
    python sourcerer.py
 
-Enter Reddit share link
+Enter Reddit share link<br />
 Enter GIF search words
