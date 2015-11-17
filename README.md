@@ -9,7 +9,7 @@ Install PRAW<br />
 
 Install textblob<br />
 ```
-   pip install -U textblob<br />
+   pip install -U textblob
    python -m textblob.download_corpora
 ```
 
