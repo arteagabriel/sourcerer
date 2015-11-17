@@ -2,6 +2,7 @@ import praw
 import urllib
 import urllib2
 from bs4 import BeautifulSoup
+from textblob import Word
 
 # must have a user agent string
 r = praw.Reddit("user agent for sourcerer project")
@@ -42,6 +43,7 @@ for comment in comments:
 
 # create list with most used words at the beginning
 sorted_words = sorted(word_count, word_count.get)
+# remove space as a most common word
 sorted_words.remove(sorted_words[0])
 
 # print words in list for testing purposes
@@ -65,10 +67,54 @@ def get_first_link(search_words):
 
     return url[url.find('=') + 1:]
 
+def get_synset(word):
+    wn = Word(word)
+    BEGIN = 8 
+    synonyms = []
+
+    for syn in wn.synsets:
+        end = str(syn).find('.', BEGIN)
+        # get synonym str from synset object
+        s = str(syn)[BEGIN:end]
+
+        if s not in synonyms:
+            synonyms.append(s)
+
+    return synonyms
+
+def get_synsets(words):
+    synsets = []
+
+    for word in words:
+        synsets.append(get_synset(word))
+
+    return synsets
+
+def get_cross_ref_words(synsets):
+    words = []
+
+    for synset in synsets:
+        for syn in synset:
+            if syn in sorted_words and syn not in words:
+                words.append(syn)
+    
+    return words
+
+# get list of synonyms for words in title
+title_synsets = get_synsets(submission.title.split()) 
+title_syn_search = "+".join(get_cross_ref_words(title_synsets))
+
+# get list of synonyms of words in search words
+user_search_synsets = get_synsets(user_search_list)
+user_syn_search = "+".join(get_cross_ref_words(user_search_synsets))
+
+    
 yt_playlist = "http://www.youtube.com/watch_videos?video_ids="
 yt_playlist += (get_first_link(title) + ',')
 # yt_playlist += (get_first_link(title + "+" + top_5) + ',')
 yt_playlist += (get_first_link(top_5) + ',')
-yt_playlist += get_first_link(user_search_list)
+yt_playlist += (get_first_link(user_search_list) + ',')
+yt_playlist += (get_first_link(title_syn_search) + ',')
+yt_playlist += get_first_link(user_syn_search)
 
 print yt_playlist
